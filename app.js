@@ -63,7 +63,7 @@ function findInCollection(collectionName, objToFindInMongo, callback){
 					  if(err){callback({errorMessage:'Collection Find Error'})
 					  }else{
 						    console.log('found array '+resultArray)
-						  	if(resultArray.length ==0){//no result to return
+						  	if(resultArray.length == 0){//no result to return
 			  				    console.log('resultArray length = '+resultArray.length)
 			  				    console.log('couldnt find ')
 			  				    console.log(objToFindInMongo)
@@ -93,8 +93,8 @@ app.get('/', function(req, res){
 app.get('/request/fridge', function(req, res){
 	findInCollection('tempData', {}, function(dbObj){
 		if(!dbObj.errorMessage){
-			console.log(dbObj.message)
-			res.send(dbObj.message)
+			// console.log(dbObj.message)
+			res.send(dbObj.message.reverse())
 		}
 
 	})
@@ -103,8 +103,19 @@ app.get('/request/fridge', function(req, res){
 app.get('/tempData', (req, res)=>{
 	findInCollection('tempData', {}, function(dbObj){
 		if(!dbObj.errorMessage){
-			console.log(dbObj.message)
-			res.send(dbObj.message)
+			// console.log(dbObj.message)
+			res.send(dbObj.message.reverse())
+		}
+
+	})
+})
+
+app.get('/tempData/:id', (req, res)=>{
+	let {id} = req.params
+	findInCollection('tempData', {sensorID:id}, function(dbObj){
+		if(!dbObj.errorMessage){
+			// console.log(dbObj.message)
+			res.send(dbObj.message.reverse())
 		}
 
 	})
