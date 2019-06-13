@@ -100,6 +100,16 @@ app.get('/request/fridge', function(req, res){
 	})
 })
 
+app.get('/tempData', (req, res)=>{
+	findInCollection('tempData', {}, function(dbObj){
+		if(!dbObj.errorMessage){
+			console.log(dbObj.message)
+			res.send(dbObj.message)
+		}
+
+	})
+})
+
 
 app.get('/temp/:temp/:humidity/:id/', function (req, res) {
 	console.log(req.params)
