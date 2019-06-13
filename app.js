@@ -104,7 +104,7 @@ app.get('/tempData', (req, res)=>{
 	findInCollection('tempData', {}, function(dbObj){
 		if(!dbObj.errorMessage){
 			// console.log(dbObj.message)
-			res.send(dbObj.message.reverse())
+			res.send(dbObj.message.slice(-50).reverse())
 		}
 
 	})
@@ -115,7 +115,7 @@ app.get('/tempData/:id', (req, res)=>{
 	findInCollection('tempData', {sensorID:id}, function(dbObj){
 		if(!dbObj.errorMessage){
 			// console.log(dbObj.message)
-			res.send(dbObj.message.reverse())
+			res.send(dbObj.message.slice(-50).reverse())
 		}
 
 	})
