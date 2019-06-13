@@ -103,7 +103,8 @@ app.get('/request/fridge', function(req, res){
 
 app.get('/temp/:temp/:humidity/:id/', function (req, res) {
 	console.log(req.params)
-	console.log(req.headers)
+	console.log(req.headers.secret)
+	console.log(SECRET)
 	if(req.headers.secret !== SECRET) return res.send('Si, puede estamos encinidos')
 	let {temp, humidity, id, secret} = req.params
 
