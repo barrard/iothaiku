@@ -90,15 +90,101 @@ app.get('/', function(req, res){
 	// res.sendFile(__dirname+'/public/index.html')
 	res.sendFile('/index.html')
 })
-app.get('/request/fridge', function(req, res){
-	findInCollection('tempData', {}, function(dbObj){
+app.get('/rotary/set_start_treshold/:startThreshold/:id', function (req, res) {
+	if(req.headers.secret !== SECRET) return res.send('Si, puede estamos encinidos')
+	let {startThreshold, id} = req.params
+
+	//console.log(timeStamp)
+	var dataObj = {
+		sensorID:id,
+		startThreshold,
+		date:new Date().getTime()
+	}
+	insertIntoMongo('rotaryData', dataObj, function(msgObj){
+		if(msgObj.errorMessage){
+			console.log('ERRPR!!!!!!!!111 '+msgObj.errorMessage)
+			console.log(msgObj)
+		}else if (msgObj.message){
+			console.log('startThreshold rotary data inserted ')
+			console.log(dataObj)
+		}
+	})
+   res.send('yes?');
+})
+app.get('/rotary/set_stop_treshold/:stopThreshold/:id', function (req, res) {
+	if(req.headers.secret !== SECRET) return res.send('Si, puede estamos encinidos')
+	let {stopThreshold, id} = req.params
+
+	//console.log(timeStamp)
+	var dataObj = {
+		sensorID:id,
+		stopThreshold,
+		date:new Date().getTime()
+	}
+	insertIntoMongo('rotaryData', dataObj, function(msgObj){
+		if(msgObj.errorMessage){
+			console.log('ERRPR!!!!!!!!111 '+msgObj.errorMessage)
+			console.log(msgObj)
+		}else if (msgObj.message){
+			console.log('stopThreshold rotary data inserted ')
+			console.log(dataObj)
+		}
+	})
+   res.send('yes?');
+})
+app.get('/rotary/action/:action/:id', function (req, res) {
+	if(req.headers.secret !== SECRET) return res.send('Si, puede estamos encinidos')
+	let {action, id} = req.params
+
+	//console.log(timeStamp)
+	var dataObj = {
+		sensorID:id,
+		action,
+		date:new Date().getTime()
+	}
+	insertIntoMongo('rotaryData', dataObj, function(msgObj){
+		if(msgObj.errorMessage){
+			console.log('ERRPR!!!!!!!!111 '+msgObj.errorMessage)
+			console.log(msgObj)
+		}else if (msgObj.message){
+			console.log('action rotary data inserted ')
+			console.log(dataObj)
+		}
+	})
+   res.send('yes?');
+})
+app.get('/rotary/:value/:id', function (req, res) {
+	if(req.headers.secret !== SECRET) return res.send('Si, puede estamos encinidos')
+	let {value, id} = req.params
+
+	//console.log(timeStamp)
+	var dataObj = {
+		sensorID:id,
+		value:value,
+		date:new Date().getTime()
+	}
+	insertIntoMongo('rotaryData', dataObj, function(msgObj){
+		if(msgObj.errorMessage){
+			console.log('ERRPR!!!!!!!!111 '+msgObj.errorMessage)
+			console.log(msgObj)
+		}else if (msgObj.message){
+			console.log('rotary data inserted ')
+			console.log(dataObj)
+		}
+	})
+   res.send('yes?');
+})
+
+app.get('/rotary', (req, res)=>{
+	findInCollection('rotaryData', {}, function(dbObj){
 		if(!dbObj.errorMessage){
 			// console.log(dbObj.message)
-			res.send(dbObj.message.reverse())
-		}
+			res.send(dbObj.message.slice(-50).reverse())
+		}else{res.send('No data yet')}
 
 	})
 })
+
 
 app.get('/tempData', (req, res)=>{
 	findInCollection('tempData', {}, function(dbObj){
