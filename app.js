@@ -153,7 +153,7 @@ app.get('/rotary/action/:action/:id', function (req, res) {
 	})
    res.send('yes?');
 })
-app.get('/rotary/:value/:id', function (req, res) {
+app.get('/rotary/value/:value/:id', function (req, res) {
 	if(req.headers.secret !== SECRET) return res.send('Si, puede estamos encinidos')
 	let {value, id} = req.params
 
