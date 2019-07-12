@@ -6,6 +6,10 @@
 	<script src="/socket.io/socket.io.js"></script>
 	<script>
 		var socket = io();
+
+		socket.on('rotor_data', (data)=>{
+			console.log(data)
+		})
 	</script>
 </head>
 <body>

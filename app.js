@@ -15,6 +15,7 @@ io.on('connection', function(socket){
 	
 	socket.on('rotor', (data)=>{
 		console.log(data)
+		io.emit('rotor_data', data)
 	})
   socket.on('disconnect', function(){
     console.log('user disconnected');
