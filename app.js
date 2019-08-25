@@ -25,6 +25,7 @@ function connectMongo(callback){
 	     	console.log("We are connected to " + db.databaseName)
 	     	callback(db)
 		}else{
+			console.log('errs baaad')
 			return false
 		}
 	 })
