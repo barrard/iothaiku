@@ -4,10 +4,23 @@ var app = express();
 const SECRET = process.env.SECRET
 var url = 'mongodb://localhost:27017/IoT';
 var MongoClient = require('mongodb').MongoClient
+var http = require('http').createServer(app);
+var io = require('socket.io')(http);
+
 
 app.use(express.static('public'));
 
-
+io.on('connection', function(socket){
+	console.log('a user connected');
+	
+	socket.on('rotor', (data)=>{
+		console.log(data)
+		io.emit('rotor_data', data)
+	})
+  socket.on('disconnect', function(){
+    console.log('user disconnected');
+  });
+});
  function handleError(err){
  	if(err){
  		console.log('-----HandleError helper function found an error------')
@@ -64,7 +77,7 @@ function findInCollection(collectionName, objToFindInMongo, callback){
 					  if(err){callback({errorMessage:'Collection Find Error'})
 					  }else{
 						    console.log('found array '+resultArray)
-						  	if(resultArray.length ==0){//no result to return
+						  	if(resultArray.length == 0){//no result to return
 			  				    console.log('resultArray length = '+resultArray.length)
 			  				    console.log('couldnt find ')
 			  				    console.log(objToFindInMongo)
@@ -91,11 +104,118 @@ app.get('/', function(req, res){
 	// res.sendFile(__dirname+'/public/index.html')
 	res.sendFile('/index.html')
 })
-app.get('/request/fridge', function(req, res){
+app.get('/rotary/set_start_treshold/:startThreshold/:id', function (req, res) {
+	if(req.headers.secret !== SECRET) return res.send('Si, puede estamos encinidos')
+	let {startThreshold, id} = req.params
+
+	//console.log(timeStamp)
+	var dataObj = {
+		sensorID:id,
+		startThreshold,
+		date:new Date().getTime()
+	}
+	insertIntoMongo('rotaryData', dataObj, function(msgObj){
+		if(msgObj.errorMessage){
+			console.log('ERRPR!!!!!!!!111 '+msgObj.errorMessage)
+			console.log(msgObj)
+		}else if (msgObj.message){
+			console.log('startThreshold rotary data inserted ')
+			console.log(dataObj)
+		}
+	})
+   res.send('yes?');
+})
+app.get('/rotary/set_stop_treshold/:stopThreshold/:id', function (req, res) {
+	if(req.headers.secret !== SECRET) return res.send('Si, puede estamos encinidos')
+	let {stopThreshold, id} = req.params
+
+	//console.log(timeStamp)
+	var dataObj = {
+		sensorID:id,
+		stopThreshold,
+		date:new Date().getTime()
+	}
+	insertIntoMongo('rotaryData', dataObj, function(msgObj){
+		if(msgObj.errorMessage){
+			console.log('ERRPR!!!!!!!!111 '+msgObj.errorMessage)
+			console.log(msgObj)
+		}else if (msgObj.message){
+			console.log('stopThreshold rotary data inserted ')
+			console.log(dataObj)
+		}
+	})
+   res.send('yes?');
+})
+app.get('/rotary/action/:action/:id', function (req, res) {
+	if(req.headers.secret !== SECRET) return res.send('Si, puede estamos encinidos')
+	let {action, id} = req.params
+
+	//console.log(timeStamp)
+	var dataObj = {
+		sensorID:id,
+		action,
+		date:new Date().getTime()
+	}
+	insertIntoMongo('rotaryData', dataObj, function(msgObj){
+		if(msgObj.errorMessage){
+			console.log('ERRPR!!!!!!!!111 '+msgObj.errorMessage)
+			console.log(msgObj)
+		}else if (msgObj.message){
+			console.log('action rotary data inserted ')
+			console.log(dataObj)
+		}
+	})
+   res.send('yes?');
+})
+app.get('/rotary/value/:value/:id', function (req, res) {
+	if(req.headers.secret !== SECRET) return res.send('Si, puede estamos encinidos')
+	let {value, id} = req.params
+
+	//console.log(timeStamp)
+	var dataObj = {
+		sensorID:id,
+		value:value,
+		date:new Date().getTime()
+	}
+	insertIntoMongo('rotaryData', dataObj, function(msgObj){
+		if(msgObj.errorMessage){
+			console.log('ERRPR!!!!!!!!111 '+msgObj.errorMessage)
+			console.log(msgObj)
+		}else if (msgObj.message){
+			console.log('rotary data inserted ')
+			console.log(dataObj)
+		}
+	})
+   res.send('yes?');
+})
+
+app.get('/rotary', (req, res)=>{
+	findInCollection('rotaryData', {}, function(dbObj){
+		if(!dbObj.errorMessage){
+			// console.log(dbObj.message)
+			res.send(dbObj.message.slice(-50).reverse())
+		}else{res.send('No data yet')}
+
+	})
+})
+
+
+app.get('/tempData', (req, res)=>{
 	findInCollection('tempData', {}, function(dbObj){
 		if(!dbObj.errorMessage){
-			console.log(dbObj.message)
-			res.send(dbObj.message)
+			// console.log(dbObj.message)
+			res.send(dbObj.message.slice(-50).reverse())
+		}
+
+	})
+})
+
+app.get('/tempData/:id', (req, res)=>{
+	let {id} = req.params
+	findInCollection('tempData', {sensorID:id}, function(dbObj){
+		if(!dbObj.errorMessage){
+			// console.log(dbObj.message)
+			res.send(dbObj.message.slice(-50).reverse())
 		}
 
 	})
@@ -104,6 +224,8 @@ app.get('/request/fridge', function(req, res){
 
 app.get('/temp/:temp/:humidity/:id/', function (req, res) {
 	console.log(req.params)
+	console.log(req.headers.secret)
+	console.log(SECRET)
 	if(req.headers.secret !== SECRET) return res.send('Si, puede estamos encinidos')
 	let {temp, humidity, id, secret} = req.params
 
@@ -136,7 +258,7 @@ app.get('/temp/:temp/:humidity/:id/', function (req, res) {
 
 
 
-var server = app.listen(8266, function () {
+var server = http.listen(8266, function () {
    var host = server.address().address
    var port = server.address().port
 

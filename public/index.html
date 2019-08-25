@@ -3,6 +3,14 @@
 <head>
 	<meta charset="UTF-8">
 	<title>IoTHaiku</title>
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+		var socket = io();
+
+		socket.on('rotor_data', (data)=>{
+			console.log(data)
+		})
+	</script>
 </head>
 <body>
 	<h1>IOT Haiku</h1>
