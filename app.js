@@ -10,210 +10,200 @@ var io = require('socket.io')(http);
 
 app.use(express.static('public'));
 
-io.on('connection', function(socket){
+io.on('connection', function (socket) {
 	console.log('a user connected');
-	
-	socket.on('rotor', (data)=>{
+
+	socket.on('rotor', (data) => {
 		console.log(data)
 		io.emit('rotor_data', data)
 	})
-  socket.on('disconnect', function(){
-    console.log('user disconnected');
-  });
+	socket.on('disconnect', function () {
+		console.log('user disconnected');
+	});
 });
- function handleError(err){
- 	if(err){
- 		console.log('-----HandleError helper function found an error------')
- 		console.log(err)
- 		console.log('------End of error-------')
- 		return false
- 	}else{
- 		return true
- 	}
- }
+function handleError(err) {
+	if (err) {
+		console.log('-----HandleError helper function found an error------')
+		console.log(err)
+		console.log('------End of error-------')
+		return false
+	} else {
+		return true
+	}
+}
 
-function connectMongo(callback){
-	MongoClient.connect(url, function(err, db) {
-	 	if(handleError(err)){
-	     	console.log("We are connected to " + db.databaseName)
-	     	callback(db)
-		}else{
+function connectMongo(callback) {
+	MongoClient.connect(url, function (err, db) {
+		if (handleError(err)) {
+			console.log("We are connected to " + db.databaseName)
+			callback(db)
+		} else {
 			console.log('errs baaad')
 			return false
 		}
-	 })
+	})
 
 }
 
-function connectionToMongoCollection(collectionName, callback){
-	connectMongo(function(db){
+function connectionToMongoCollection(collectionName, callback) {
+	connectMongo(function (db) {
 		var col = db.collection(collectionName)
 		callback(col, db)
 	})
 }
 
-function insertIntoMongo(collectionName, data, callback){
-	// console.log(data)
-	connectionToMongoCollection(collectionName, function(col, db){
-			col.insert(data, function(err, resp){
-				if(err){
-					console.log('Error Message form DataBaseFunctions insert into mongo')
-					callback({errorMessage:err})
-				}else{
-					callback({message:resp})
-				}
-			})
-		
+function insertIntoMongo(collectionName, data, callback) {
+	console.log(data)
+	connectionToMongoCollection(collectionName, function (col, db) {
+		col.insert(data, function (err, resp) {
+			if (err) {
+				console.log('Error Message form DataBaseFunctions insert into mongo')
+				callback({ errorMessage: err })
+			} else {
+				callback({ message: resp })
+			}
+		})
+
 		db.close()
 	})
 }
 
-function findInCollection(collectionName, objToFindInMongo, callback){
-	connectMongo(function(db){
-		if(db){
-			var collection  = db.collection(collectionName)
+function findInCollection(collectionName, objToFindInMongo, callback) {
+	connectMongo(function (db) {
+		if (db) {
+			var collection = db.collection(collectionName)
 			console.log('collection name ' + collection.s.name)
-					collection.find(objToFindInMongo).toArray(function(err, resultArray){
-					  if(err){callback({errorMessage:'Collection Find Error'})
-					  }else{
-						    console.log('found array '+resultArray)
-						  	if(resultArray.length == 0){//no result to return
-			  				    console.log('resultArray length = '+resultArray.length)
-			  				    console.log('couldnt find ')
-			  				    console.log(objToFindInMongo)
-			  				    console.log('=>aint in the'+collection.s.name+' Collection.')
-			  				    db.close()
-			  				    callback({errorMessage:'result.length ='+resultArray.length})
-						  	}else{
-						  		console.log('Handle results and pass data back to the callback')
-						  		// callback()
-						  		console.log(resultArray.length)
-						  		db.close()
-						  		callback({message:resultArray})
-						  	}
-					  }
-					})
+			collection.find(objToFindInMongo).toArray(function (err, resultArray) {
+				if (err) {
+					callback({ errorMessage: 'Collection Find Error' })
+				} else {
+					console.log('found array ' + resultArray)
+					if (resultArray.length == 0) {//no result to return
+						console.log('resultArray length = ' + resultArray.length)
+						console.log('couldnt find ')
+						console.log(objToFindInMongo)
+						console.log('=>aint in the' + collection.s.name + ' Collection.')
+						db.close()
+						callback({ errorMessage: 'result.length =' + resultArray.length })
+					} else {
+						console.log('Handle results and pass data back to the callback')
+						// callback()
+						console.log(resultArray.length)
+						db.close()
+						callback({ message: resultArray })
+					}
+				}
+			})
 
-			}
-		})
-	}
+		}
+	})
+}
 
 
 
-app.get('/', function(req, res){
+app.get('/', function (req, res) {
 	// res.sendFile(__dirname+'/public/index.html')
 	res.sendFile('/index.html')
 })
 app.get('/rotary/set_start_treshold/:startThreshold/:id', function (req, res) {
-	if(req.headers.secret !== SECRET) return res.send('Si, puede estamos encinidos')
-	let {startThreshold, id} = req.params
+	if (req.headers.secret !== SECRET) return res.send('Si, puede estamos encinidos')
+	let { startThreshold, id } = req.params
 
 	//console.log(timeStamp)
 	var dataObj = {
-		sensorID:id,
+		sensorID: id,
 		startThreshold,
-		date:new Date().getTime()
+		date: new Date().getTime()
 	}
-	insertIntoMongo('rotaryData', dataObj, function(msgObj){
-		if(msgObj.errorMessage){
-			console.log('ERRPR!!!!!!!!111 '+msgObj.errorMessage)
+	insertIntoMongo('rotaryData', dataObj, function (msgObj) {
+		if (msgObj.errorMessage) {
+			console.log('ERRPR!!!!!!!!111 ' + msgObj.errorMessage)
 			console.log(msgObj)
-		}else if (msgObj.message){
+		} else if (msgObj.message) {
 			console.log('startThreshold rotary data inserted ')
 			console.log(dataObj)
 		}
 	})
-   res.send('yes?');
+	res.send('yes?');
 })
 app.get('/rotary/set_stop_treshold/:stopThreshold/:id', function (req, res) {
-	if(req.headers.secret !== SECRET) return res.send('Si, puede estamos encinidos')
-	let {stopThreshold, id} = req.params
+	if (req.headers.secret !== SECRET) return res.send('Si, puede estamos encinidos')
+	let { stopThreshold, id } = req.params
 
 	//console.log(timeStamp)
 	var dataObj = {
-		sensorID:id,
+		sensorID: id,
 		stopThreshold,
-		date:new Date().getTime()
+		date: new Date().getTime()
 	}
-	insertIntoMongo('rotaryData', dataObj, function(msgObj){
-		if(msgObj.errorMessage){
-			console.log('ERRPR!!!!!!!!111 '+msgObj.errorMessage)
+	insertIntoMongo('rotaryData', dataObj, function (msgObj) {
+		if (msgObj.errorMessage) {
+			console.log('ERRPR!!!!!!!!111 ' + msgObj.errorMessage)
 			console.log(msgObj)
-		}else if (msgObj.message){
+		} else if (msgObj.message) {
 			console.log('stopThreshold rotary data inserted ')
 			console.log(dataObj)
 		}
 	})
-   res.send('yes?');
+	res.send('yes?');
 })
 app.get('/rotary/action/:action/:id', function (req, res) {
-	if(req.headers.secret !== SECRET) return res.send('Si, puede estamos encinidos')
-	let {action, id} = req.params
+	if (req.headers.secret !== SECRET) return res.send('Si, puede estamos encinidos')
+	let { action, id } = req.params
 
 	//console.log(timeStamp)
 	var dataObj = {
-		sensorID:id,
+		sensorID: id,
 		action,
-		date:new Date().getTime()
+		date: new Date().getTime()
 	}
-	insertIntoMongo('rotaryData', dataObj, function(msgObj){
-		if(msgObj.errorMessage){
-			console.log('ERRPR!!!!!!!!111 '+msgObj.errorMessage)
+	insertIntoMongo('rotaryData', dataObj, function (msgObj) {
+		if (msgObj.errorMessage) {
+			console.log('ERRPR!!!!!!!!111 ' + msgObj.errorMessage)
 			console.log(msgObj)
-		}else if (msgObj.message){
+		} else if (msgObj.message) {
 			console.log('action rotary data inserted ')
 			console.log(dataObj)
 		}
 	})
-   res.send('yes?');
+	res.send('yes?');
 })
 app.get('/rotary/value/:value/:id', function (req, res) {
-	if(req.headers.secret !== SECRET) return res.send('Si, puede estamos encinidos')
-	let {value, id} = req.params
+	if (req.headers.secret !== SECRET) return res.send('Si, puede estamos encinidos')
+	let { value, id } = req.params
 
 	//console.log(timeStamp)
 	var dataObj = {
-		sensorID:id,
-		value:value,
-		date:new Date().getTime()
+		sensorID: id,
+		value: value,
+		date: new Date().getTime()
 	}
-	insertIntoMongo('rotaryData', dataObj, function(msgObj){
-		if(msgObj.errorMessage){
-			console.log('ERRPR!!!!!!!!111 '+msgObj.errorMessage)
+	insertIntoMongo('rotaryData', dataObj, function (msgObj) {
+		if (msgObj.errorMessage) {
+			console.log('ERRPR!!!!!!!!111 ' + msgObj.errorMessage)
 			console.log(msgObj)
-		}else if (msgObj.message){
+		} else if (msgObj.message) {
 			console.log('rotary data inserted ')
 			console.log(dataObj)
 		}
 	})
-   res.send('yes?');
+	res.send('yes?');
 })
 
-app.get('/rotary', (req, res)=>{
-	findInCollection('rotaryData', {}, function(dbObj){
-		if(!dbObj.errorMessage){
+app.get('/rotary', (req, res) => {
+	findInCollection('rotaryData', {}, function (dbObj) {
+		if (!dbObj.errorMessage) {
 			// console.log(dbObj.message)
 			res.send(dbObj.message.slice(-50).reverse())
-		}else{res.send('No data yet')}
+		} else { res.send('No data yet') }
 
 	})
 })
 
 
-app.get('/tempData', (req, res)=>{
-	findInCollection('tempData', {}, function(dbObj){
-		if(!dbObj.errorMessage){
-			// console.log(dbObj.message)
-			res.send(dbObj.message.slice(-50).reverse())
-		}
-
-	})
-})
-
-app.get('/tempData/:id', (req, res)=>{
-	let {id} = req.params
-	findInCollection('tempData', {sensorID:id}, function(dbObj){
-		if(!dbObj.errorMessage){
+app.get('/tempData', (req, res) => {
+	findInCollection('tempData', {}, function (dbObj) {
+		if (!dbObj.errorMessage) {
 			// console.log(dbObj.message)
 			res.send(dbObj.message.slice(-50).reverse())
 		}
@@ -221,50 +211,61 @@ app.get('/tempData/:id', (req, res)=>{
 	})
 })
 
+app.get('/tempData/:id', (req, res) => {
+	let { id } = req.params
+	findInCollection('tempData', { sensorID: id }, function (dbObj) {
+		if (!dbObj.errorMessage) {
+			// console.log(dbObj.message)
+			res.send(dbObj.message.slice(-50).reverse())
+		}
 
-app.get('/temp/:temp/:humidity/:id/', function (req, res) {
+	})
+})
+
+
+app.get('/temp/:temp/:humidity/:pressure/', function (req, res) {
 	console.log(req.params)
 	console.log(req.headers.secret)
 	console.log(SECRET)
-	if(req.headers.secret !== SECRET) return res.send('Si, puede estamos encinidos')
-	let {temp, humidity, id, secret} = req.params
+	if (req.headers.secret !== SECRET) return res.send('Si, puede estamos encinidos')
+	let { temp, humidity, id, secret } = req.params
 
 	var params = req.params
 	var date = new Date()
 	var offset = date.getTimezoneOffset()
-	console.log('offset = '+offset)
-	var dateStamp = date.getMonth()+1+'-'+date.getDate()+'-'+(date.getYear()-100)
-	var timeStamp = date.getHours()+':'+date.getMinutes()+':'+date.getSeconds()
+	console.log('offset = ' + offset)
+	var dateStamp = date.getMonth() + 1 + '-' + date.getDate() + '-' + (date.getYear() - 100)
+	var timeStamp = date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
 	//console.log(timeStamp)
 	var dataObj = {
-		sensorID:params.id,
-		temp:params.temp,
-		humidity:params.humidity,
-		date:dateStamp,
-		time:timeStamp,
-		trueDate:date
+		pressure: params.pressure,
+		temp: params.temp,
+		humidity: params.humidity,
+		date: dateStamp,
+		time: timeStamp,
+		trueDate: date
 	}
-	insertIntoMongo('tempData', dataObj, function(msgObj){
-		if(msgObj.errorMessage){
-			console.log('ERRPR!!!!!!!!111 '+msgObj.errorMessage)
+	insertIntoMongo('tempData', dataObj, function (msgObj) {
+		if (msgObj.errorMessage) {
+			console.log('ERRPR!!!!!!!!111 ' + msgObj.errorMessage)
 			console.log(msgObj)
-		}else if (msgObj.message){
+		} else if (msgObj.message) {
 			console.log('Yay data war inserted ')
 			console.log(dataObj)
 		}
 	})
-   res.send('yes?');
+	res.send('yes?');
 })
 
 
 
 var server = http.listen(8266, function () {
-   var host = server.address().address
-   var port = server.address().port
+	var host = server.address().address
+	var port = server.address().port
 
-   console.log(server.address())
-   
-   console.log("Example app listening at http://%s:%s", host, port)
+	console.log(server.address())
+
+	console.log("Example app listening at http://%s:%s", host, port)
 })
 
 
