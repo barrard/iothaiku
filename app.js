@@ -10,13 +10,21 @@ var io = require('socket.io')(http);
 
 app.use(express.static('public'));
 
+app.use((req, res, next)=>{
+	console.log('res!?!?!?')
+	next()
+})
+
 io.on('connection', function (socket) {
 	console.log('a user connected');
+	socket.emit('temp_data', LATEST_READINGS)
 
 	socket.on('rotor', (data) => {
 		console.log(data)
 		io.emit('rotor_data', data)
 	})
+
+
 	socket.on('disconnect', function () {
 		console.log('user disconnected');
 	});
@@ -222,7 +230,7 @@ app.get('/tempData/:id', (req, res) => {
 	})
 })
 
-
+let LATEST_READINGS={}
 app.get('/temp/:temp/:humidity/:pressure/', function (req, res) {
 	console.log(req.params)
 	console.log(req.headers.secret)
@@ -245,6 +253,8 @@ app.get('/temp/:temp/:humidity/:pressure/', function (req, res) {
 		time: timeStamp,
 		trueDate: date
 	}
+	LATEST_READINGS = dataObj
+	io.emit('temp_data', dataObj)
 	insertIntoMongo('tempData', dataObj, function (msgObj) {
 		if (msgObj.errorMessage) {
 			console.log('ERRPR!!!!!!!!111 ' + msgObj.errorMessage)
