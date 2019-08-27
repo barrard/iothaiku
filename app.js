@@ -213,7 +213,7 @@ app.get('/tempData', (req, res) => {
 	findInCollection('tempData', {}, function (dbObj) {
 		if (!dbObj.errorMessage) {
 			// console.log(dbObj.message)
-			res.send(dbObj.message.slice(-5000).reverse())
+			res.send(dbObj.message.slice(-500).reverse())
 		}
 
 	})
