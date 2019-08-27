@@ -229,8 +229,10 @@ app.get('/tempData/:id', (req, res) => {
 
 	})
 })
-
 let LATEST_READINGS={}
+findInCollection('tempData', {}, function (dbObj) {
+	LATEST_READINGS = dbObj
+})
 app.get('/temp/:temp/:humidity/:pressure/', function (req, res) {
 	console.log(req.params)
 	console.log(req.headers.secret)
