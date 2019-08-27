@@ -236,7 +236,7 @@ app.get('/temp/:temp/:humidity/:pressure/', function (req, res) {
 	console.log(req.headers.secret)
 	console.log(SECRET)
 	if (req.headers.secret !== SECRET) return res.send('Si, puede estamos encinidos')
-	let { temp, humidity, id, secret } = req.params
+	let { temp, humidity, pressure } = req.params
 
 	var params = req.params
 	var date = new Date()
@@ -246,9 +246,9 @@ app.get('/temp/:temp/:humidity/:pressure/', function (req, res) {
 	var timeStamp = date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
 	//console.log(timeStamp)
 	var dataObj = {
-		pressure: params.pressure,
-		temp: params.temp,
-		humidity: params.humidity,
+		pressure: pressure,
+		temp: temp,
+		humidity: humidity,
 		date: dateStamp,
 		time: timeStamp,
 		trueDate: date
