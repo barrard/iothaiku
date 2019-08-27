@@ -85,7 +85,7 @@ function findInCollection(collectionName, objToFindInMongo, callback) {
 				if (err) {
 					callback({ errorMessage: 'Collection Find Error' })
 				} else {
-					console.log('found array ' + resultArray)
+					console.log('found array with' + resultArray.length + ' items')
 					if (resultArray.length == 0) {//no result to return
 						console.log('resultArray length = ' + resultArray.length)
 						console.log('couldnt find ')
@@ -213,7 +213,7 @@ app.get('/tempData', (req, res) => {
 	findInCollection('tempData', {}, function (dbObj) {
 		if (!dbObj.errorMessage) {
 			// console.log(dbObj.message)
-			res.send(dbObj.message.slice(-50).reverse())
+			res.send(dbObj.message.slice(-5000).reverse())
 		}
 
 	})

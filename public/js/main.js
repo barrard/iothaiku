@@ -56,19 +56,33 @@ function C_to_F(C){
 
 
 function make_dimple_chart(divId, data, prop){
-  console.log(data)
-  var svg = dimple.newSvg(`#${divId}`, 600, 300);
+  // console.log(data)
+  let svg = dimple.newSvg(`#${divId}`, 600, 300);
   // data = dimple.filterData(data, "Owner", ["Aperture", "Black Mesa"])
-  var myChart = new dimple.chart(svg, data);
+  let myChart = new dimple.chart(svg, data);
   myChart.setBounds(60, 30, 505, 305);
       // setMargins(left, top, right, bottom) 
   myChart.setMargins(50, 0, 0, 40) 
-  var x = myChart.addTimeAxis("x", "trueDate");
+  let x = myChart.addTimeAxis("x", "trueDate");
   // x.dateParseFormat = "%H:%M:%S"
   x.tickFormat = "%H:%M:%S"
-  x.timeInterval = 4
+  // x.timeInterval = 4
   x.addOrderRule("time");
-  myChart.addMeasureAxis("y", `${prop}`);
-  var s = myChart.addSeries(null, dimple.plot.line);
+  let y = myChart.addMeasureAxis("y", `${prop}`);
+  let prop_min = getMin(data, prop)
+  let prop_max = getMax(data, prop)
+  console.log({prop_max, prop_min, prop})
+  y.overrideMax = prop_max +(prop_max* .1);
+  y.overrideMin = prop_min - (prop_min*.2);
+  
+  let s = myChart.addSeries(null, dimple.plot.line);
   myChart.draw();
+}
+
+
+function getMin(data,prop) {
+  return parseFloat(data.reduce((min, p) => p[prop] < min ? p[prop] : min, data[0][prop]));
+}
+function getMax(data,prop) {
+  return parseFloat(data.reduce((max, p) => p[prop] > max ? p[prop] : max, data[0][prop]));
 }

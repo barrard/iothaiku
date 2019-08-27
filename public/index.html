@@ -1,76 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<link rel="stylesheet" href="/css/boots.css">
-	<meta charset="UTF-8">
-	<title>IoTHaiku</title>
-	<script src="/socket.io/socket.io.js"></script>
+  <head>
+    <link rel="stylesheet" href="/css/boots.css" />
+    <link rel="stylesheet" href="/css/css.css" />
+    <meta charset="UTF-8" />
+    <title>IoTHaiku</title>
+    <script src="/socket.io/socket.io.js"></script>
+  </head>
+  <body>
+    <h1>IOT Haiku</h1>
 
-</head>
-<body>
-	<h1>IOT Haiku</h1>
+    lets make a chart? and chow the latest data latest readings
 
-	lets make a chart?
+    <div class="row flex_center">
+      <div class="col-sm-6 flex_center">
+        <span>Time: <span id="latest_tempData_time"></span></span>
+      </div>
+      <div class="col-sm-6 flex_center">
+        <span>Date: <span id="latest_tempData_date"></span></span>
+      </div>
+		</div>
+		
 
-	and chow the latest data
-
-	latest readings
-
-	<div className='row flex_center'>
-		<div className='col-sm-2 flex_center'>
-			<span>Time: <span id="latest_tempData_time"></span></span>
+<!-- Charts -->
+    <div class="row ">
+			<!-- Temp chart -->
+      <div class="col-sm-12 ">
+        <div class="row ">
+					<div class='col-sm-12 flex_center'>
+							Temp: <span id="latest_temp"></span>
+					</div>
+				</div>
+        <div class="row ">
+          <div class="col-sm-12 ">
+            <div id="temp_chart"></div>
+          </div>
+        </div>
+			</div>
 			
-		</div>
-		<div className='col-sm-2 flex_center'>
-			<span>Date: <span id="latest_tempData_date"></span></span>
-			
-		</div>
-	</div>
 
-	<div className='row flex_center'>
-		<div className='col-sm-3 flex_center'>
-			<span>Temp: <span id="latest_temp"></span></span>
-		</div>
-		<div className='col-sm-3 flex_center'>
-			<span>Humidity: <span id="latest_humidty"></span></span>
-		</div>
-		<div className='col-sm-3 flex_center'>
-			<span>Pressure: <span id="latest_pressure"></span></span>
-		</div>
-	</div>
+      <div class="col-sm-12 ">
+        <div class='row flex_center'>
+					<div class='col-sm-12 flex_center'>
+							Humidity: <span id="latest_humidty"></span>
+					</div>
+				</div>
 
+        <div class="row ">
+          <div class="col-sm-6 ">
+            <div id="humidity_chart"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-12 ">
+        <div class='row flex_center'>
+					<div class='col-sm-12 flex_center'>
+							Pressure: <span id="latest_pressure"></span>
+					</div>
+				</div>
 
+        <div class="row ">
+          <div class="col-sm-12 ">
+            <div id="pressure_chart"></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-	<div className='row flex_center'>
-			<div className='col-sm-6 flex_center'>
-				<div id="temp_chart"></div>
-				
-			</div>
-		</div>
-
-	<div className='row flex_center'>
-			<div className='col-sm-6 flex_center'>
-				<div id="pressure_chart"></div>
-				
-			</div>
-		</div>
-
-	<div className='row flex_center'>
-			<div className='col-sm-6 flex_center'>
-				<div id="humidity_chart"></div>
-				
-			</div>
-		</div>
-
-	
-
-
-
-	<script src="/js/jq.js"></script>
-	<script src="/js/d3.js"></script>
-	<script src="/js/dimple.js"></script>
-	<script src="/js/main.js"></script>
-	<script src="/js/socket_handlers.js"></script>
-
-</body>
+    <script src="/js/jq.js"></script>
+    <script src="/js/d3.js"></script>
+    <script src="/js/dimple.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/socket_handlers.js"></script>
+  </body>
 </html>
