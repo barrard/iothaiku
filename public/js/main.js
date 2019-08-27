@@ -71,11 +71,11 @@ function make_dimple_chart(divId, data, prop){
   // x.timeInterval = 4
   x.addOrderRule("time");
   let y = myChart.addMeasureAxis("y", `${prop}`);
-  // let prop_min = getMin(data, prop)
-  // let prop_max = getMax(data, prop)
-  // console.log({prop_max, prop_min, prop})
-  // y.overrideMax = prop_max +(prop_max* .1);
-  // y.overrideMin = prop_min - (prop_min*.2);
+  let prop_min = getMin(data, prop)
+  let prop_max = getMax(data, prop)
+  console.log({prop_max, prop_min, prop})
+  y.overrideMax = prop_max +(prop_max* .1);
+  y.overrideMin = prop_min - (prop_min*.2);
   
   let s = myChart.addSeries(null, dimple.plot.line);
   myChart.draw();
