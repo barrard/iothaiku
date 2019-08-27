@@ -39,7 +39,7 @@ async function request_temp_data(){
 }
 
 function display_latest_temp_data(tempData){
-  $(latest_temp).text(C_to_F(tempData.temp))
+  $(latest_temp).text(tempData.temp)
 $(latest_humidty).text(tempData.humidity)
 $(latest_pressure).text(tempData.pressure)
 
