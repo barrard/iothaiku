@@ -4,7 +4,6 @@ console.log('main')
 const latest_temp = document.getElementById('latest_temp')
 const latest_humidty = document.getElementById('latest_humidty')
 const latest_pressure = document.getElementById('latest_pressure')
-const latest_tempData_time = document.getElementById('latest_tempData_time')
 const latest_tempData_date = document.getElementById('latest_tempData_date')
 
 main()
@@ -43,8 +42,7 @@ function display_latest_temp_data(tempData){
 $(latest_humidty).text(tempData.humidity)
 $(latest_pressure).text(tempData.pressure)
 
-$(latest_tempData_time).text(tempData.time)
-$(latest_tempData_date).text(tempData.date)
+$(latest_tempData_date).text(tempData.data)
 }
 
 

@@ -240,20 +240,12 @@ app.get('/temp/:temp/:humidity/:pressure/', function (req, res) {
 	if (req.headers.secret !== SECRET) return res.send('Si, puede estamos encinidos')
 	let { temp, humidity, pressure } = req.params
 
-	var params = req.params
-	var date = new Date()
-	var offset = date.getTimezoneOffset()
-	console.log('offset = ' + offset)
-	var dateStamp = date.getMonth() + 1 + '-' + date.getDate() + '-' + (date.getYear() - 100)
-	var timeStamp = date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
-	//console.log(timeStamp)
 	var dataObj = {
 		pressure: pressure,
 		temp: temp,
 		humidity: humidity,
-		date: dateStamp,
-		time: timeStamp,
-		trueDate: date
+
+		data: new Date().getTime()
 	}
 	LATEST_READINGS = dataObj
 	io.emit('temp_data', dataObj)
