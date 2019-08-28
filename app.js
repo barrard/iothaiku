@@ -245,7 +245,7 @@ app.get('/temp/:temp/:humidity/:pressure/', function (req, res) {
 		temp: temp,
 		humidity: humidity,
 
-		data: new Date().getTime()
+		date: new Date().getTime()
 	}
 	LATEST_READINGS = dataObj
 	io.emit('temp_data', dataObj)

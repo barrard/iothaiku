@@ -64,7 +64,7 @@ function make_dimple_chart(divId, data, prop){
   myChart.setBounds(60, 30, 505, 305);
       // setMargins(left, top, right, bottom) 
   myChart.setMargins(50, 0, 0, 40) 
-  let x = myChart.addTimeAxis("x", "trueDate");
+  let x = myChart.addTimeAxis("x", "date");
   // x.dateParseFormat = "%H:%M:%S"
   x.tickFormat = "%H:%M:%S"
   // x.timeInterval = 4
