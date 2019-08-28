@@ -42,7 +42,8 @@ function display_latest_temp_data(tempData){
 $(latest_humidty).text(tempData.humidity)
 $(latest_pressure).text(tempData.pressure)
 
-$(latest_tempData_date).text(tempData.data)
+$(latest_tempData_date).text(new Date(tempData.data).toLocaleString()
+)
 }
 
 
