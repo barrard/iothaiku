@@ -239,6 +239,7 @@ app.get('/temp/:temp/:humidity/:pressure/', function (req, res) {
 	console.log(SECRET)
 	if (req.headers.secret !== SECRET) return res.send('Si, puede estamos encinidos')
 	let { temp, humidity, pressure } = req.params
+	if(!temp || !humidity || !pressure) return res.send('cant send a null value')
 
 	var dataObj = {
 		pressure: pressure,
