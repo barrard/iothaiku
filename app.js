@@ -4,7 +4,8 @@ var express = require("express");
 
 var app = express();
 const SECRET = process.env.SECRET;
-var url = "mongodb://localhost:27017/IoT";
+var url = "mongodb://192.168.0.243:27017/IoT";
+// var url = "mongodb://localhost:27017/IoT";
 var MongoClient = require("mongodb").MongoClient;
 var http = require("http").createServer(app);
 var io = require("socket.io")(http);
@@ -20,7 +21,6 @@ app.use((req, res, next) => {
 //SOCKET
 io.on("connection", function (socket) {
   console.log("a user connected");
-  socket.emit("temp_data", { LATEST_READINGS: "" });
 
   socket.on("rotor", (data) => {
     console.log(data);

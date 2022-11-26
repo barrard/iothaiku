@@ -11,9 +11,7 @@ function App() {
     getTemps();
 
     Socket.on("temp_data", (data) => {
-      console.log(data);
-      temps.push(data);
-      setTemps([...temps]);
+      setTemps([...temps, data]);
       // display_latest_temp_data(data);
     });
 
