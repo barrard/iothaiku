@@ -22,7 +22,7 @@
     "express": "^4.15.3",
     "express-partials": "^0.3.0",
     "mongodb": "^2.2.26",
-    "mongoose": "5.7.1",
+    "mongoose": "5.13.15",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "^5.0.0",
